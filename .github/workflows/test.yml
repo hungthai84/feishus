@@ -1,0 +1,27 @@
+on: [push, pull_request]
+name: UnitTesting
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: [2.7, 3.6, 3.7, 3.8, 3.9]
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Install Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
+    - name: Run Test
+      run: ./.github/deps.sh && make all-cov
+      env:
+        APP_ID_1: "${{ secrets.APP_ID_1 }}"
+        CI_FEISHU_APP_1_APP_ID: "${{ secrets.CI_FEISHU_APP_1_APP_ID }}" # ci_feishu app_id
+        CI_FEISHU_APP_1_APP_SECRET: "${{ secrets.CI_FEISHU_APP_1_APP_SECRET }}" # ci_feishu app_secret
+        APP_SECRET_1: "${{ secrets.APP_SECRET_1 }}"
+        KEY: "${{ secrets.KEY }}"
+        BOT_OPEN_LARK_APP_SECRET: "${{ secrets.BOT_OPEN_LARK_APP_SECRET }}"
